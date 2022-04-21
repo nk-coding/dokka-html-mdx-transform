@@ -1,0 +1,22 @@
+name: "dokka-html-mdx-transform"
+description: "Transforms the output of dokkaHtml to mdx files"
+inputs:
+  src:
+    description: "The path of the packages output of dokkaHTML, typically something like build/dokka/html/library-name"
+    required: true
+  dest:
+    description: "The path where to copy the generated files"
+    required: true
+  folder:
+    description: "Name of the folder in dest which is created to store the output"
+    required: true
+  overview-id:
+    description: "Id of a already present mdx file which inserted as first sidebar element"
+    required: true
+  dokka-component-path:
+    description: "Path to a react component which is used as wrapper, should export default the component"
+    required: true
+    default: "/src/components/DokkaComponent/DokkaComponent.js"
+runs:
+  using: "node16"
+  main:  "index.js"

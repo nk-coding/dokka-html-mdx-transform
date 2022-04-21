@@ -1,0 +1,16 @@
+{
+  "name": "dokka-html-mdx-transform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "fs-extra": "^10.1.0",
+    "jsdom": "^19.0.0"
+  }
+}
