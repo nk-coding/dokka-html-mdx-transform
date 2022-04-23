@@ -21,10 +21,6 @@
 
 **Required** Name of the folder in dest which is created to store the output
 
-## `overview-id`
-
-**Required** Id of a already present mdx file which inserted as first sidebar element
-
 ## `dokka-component-path`
 
 **Required** Path to a react component which is used as wrapper, should export default the component. Default `"/src/components/DokkaComponent/DokkaComponent.js"`
