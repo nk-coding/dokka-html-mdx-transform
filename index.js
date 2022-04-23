@@ -90,7 +90,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             const generated = generateForDir(packagePath)
             generated.label = generated.label.replace("Package ", "")
             const packageStructure = generated.label.split(".")
-            const lastPart = packageStructure
             let currentMap = packageHierarchy
             for (const packagePart of packageStructure) {
                 if (currentMap[packagePart] == undefined) {
