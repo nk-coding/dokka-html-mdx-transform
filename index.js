@@ -81,14 +81,56 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         }
     }
 
-    docs = [core.getInput("overview-id")]
+    const packageHierarchy = {}
+    const packageMap = {}
+
     for (const package of fs.readdirSync(src)) {
         const packagePath = path.join(src, package)
         if (fs.statSync(packagePath).isDirectory()) {
-            docs.push(generateForDir(packagePath))
+            const generated = generateForDir(packagePath)
+            generated.label = generated.label.replace("Package ", "")
+            const packageStructure = generated.label.split(".")
+            const lastPart = packageStructure
+            let currentMap = packageHierarchy
+            for (const packagePart of packageStructure) {
+                if (currentMap[packagePart] == undefined) {
+                    currentMap[packagePart] = {}
+                }
+                currentMap = currentMap[packagePart]
+            }
+            packageMap[generated.label] = generated
         }
     }
-    fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(docs))
+
+    function joinParts(old, newPart) {
+        if (old) {
+            return `${old}.${newPart}`
+        } else {
+            return newPart
+        }
+    }
+
+    function generateCategoriesRec(packageHierarchy, localName, globalName) {
+        const items = []
+        let sidebarElement = null
+        if (globalName in packageMap) {
+            sidebarElement = packageMap[globalName]
+            sidebarElement.label = localName
+            sidebarElement.className = "sidebar-package-title"
+            localName = ""
+        }
+        for (const newPart in packageHierarchy) {
+            items.push(...generateCategoriesRec(packageHierarchy[newPart], joinParts(localName, newPart), joinParts(globalName, newPart)))
+        }
+        if (sidebarElement != null) {
+            sidebarElement.items = [...sidebarElement.items, ...items]
+            return [sidebarElement]
+        } else {
+            return items
+        }
+    }
+
+    fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(generateCategoriesRec(packageHierarchy, "", "")))
 
 } catch (error) {
     core.setFailed(error.message)
