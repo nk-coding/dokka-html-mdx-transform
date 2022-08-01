@@ -3,14 +3,12 @@ const fs = require('fs-extra')
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const core = require('@actions/core');
-core.debug("started executing")
+
 try {
-    core.debug("1")
     const src = core.getInput("src")
     const dest = core.getInput("dest")
     const folder = core.getInput("folder")
     const modules = core.getMultilineInput("modules")
-    core.debug("2")
     function transformFile(file) {
         const content = fs.readFileSync(file)
         const dom = new JSDOM(content).window.document
@@ -46,7 +44,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             label: name
         }
     }
-    core.debug("3")
     function generateForDir(dir) {
         const subdirs = []
         const files = []
@@ -81,7 +78,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             items: items
         }
     }
-    core.debug("4")
     function generateModule(module) {
         const packageHierarchy = {}
         const packageMap = {}
@@ -89,6 +85,9 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         for (const package of fs.readdirSync(modulePath)) {
             const packagePath = path.join(modulePath, package)
             if (fs.statSync(packagePath).isDirectory()) {
+                if (package == "scripts") {
+                    continue
+                }
                 const generated = generateForDir(packagePath)
                 generated.label = generated.label.replace("Package ", "")
                 const packageStructure = generated.label.split(".")
@@ -132,7 +131,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             return items
         }
     }
-    core.debug("5")
     const moduleCategories = []
     for (module of modules) {
         core.debug(module)
@@ -148,6 +146,5 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
     fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(moduleCategories))
 
 } catch (error) {
-    core.debug(error)
-    core.setFailed(error.message)
+    core.setFailed(message)
 }
