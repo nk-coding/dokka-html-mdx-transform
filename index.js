@@ -139,6 +139,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         const categories = generateCategoriesRec(packageHierarchy, packageMap, "", "")
         moduleCategories.push({
             type: "category",
+            id: path.join(folder, module).replace(/\\/g, "/"),
             label: module,
             items: categories
         })
