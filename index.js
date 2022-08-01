@@ -148,6 +148,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
     fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(moduleCategories))
 
 } catch (error) {
-    core.debug(error.message)
+    core.debug(error)
     core.setFailed(error.message)
 }
