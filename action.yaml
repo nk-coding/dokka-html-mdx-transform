@@ -2,7 +2,10 @@ name: "dokka-html-mdx-transform"
 description: "Transforms the output of dokkaHtml to mdx files"
 inputs:
   src:
-    description: "The path of the packages output of dokkaHTML, typically something like build/dokka/html/library-name"
+    description: "The path of the packages output of dokkaHTML, typically something like build/dokka/html"
+    required: true
+  modules:
+    description: "The modules of the project, typically the folders in src"
     required: true
   dest:
     description: "The path where to copy the generated files"

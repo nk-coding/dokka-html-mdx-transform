@@ -11,7 +11,11 @@
 
 ## `src`
 
-**Required** The path of the packages output of dokkaHTML, typically something like build/dokka/html/library-name
+**Required** The path of the packages output of dokkaHTML, typically something like build/dokka/html
+
+## `modules`
+
+**Required** The modules in `src` which should be added to the documentation
 
 ## `dest`
 
