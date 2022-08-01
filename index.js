@@ -3,14 +3,14 @@ const fs = require('fs-extra')
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const core = require('@actions/core');
-core.message("started executing")
+core.debug("started executing")
 try {
-    core.message("1")
+    core.debug("1")
     const src = core.getInput("src")
     const dest = core.getInput("dest")
     const folder = core.getInput("folder")
     const modules = core.getMultilineInput("modules")
-    core.message("2")
+    core.debug("2")
     function transformFile(file) {
         const content = fs.readFileSync(file)
         const dom = new JSDOM(content).window.document
@@ -46,7 +46,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             label: name
         }
     }
-    core.message("3")
+    core.debug("3")
     function generateForDir(dir) {
         const subdirs = []
         const files = []
@@ -81,7 +81,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             items: items
         }
     }
-    core.message("4")
+    core.debug("4")
     function generateModule(module) {
         const packageHierarchy = {}
         const packageMap = {}
@@ -132,7 +132,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             return items
         }
     }
-    core.message("5")
+    core.debug("5")
     const moduleCategories = []
     for (module of modules) {
         const [packageHierarchy, packageMap] = generateModule(module)
