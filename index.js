@@ -135,6 +135,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
     core.debug("5")
     const moduleCategories = []
     for (module of modules) {
+        core.debug(module)
         const [packageHierarchy, packageMap] = generateModule(module)
         const categories = generateCategoriesRec(packageHierarchy, packageMap, "", "")
         moduleCategories.push({
@@ -147,5 +148,6 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
     fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(moduleCategories))
 
 } catch (error) {
+    core.debug(error.message)
     core.setFailed(error.message)
 }
