@@ -61,7 +61,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             }
         }
         if (!indexPath) {
-            throw "no index found: " + dir
+            throw new Error("no index found: " + dir)
         }
         const index = transformFile(indexPath)
         const items = [
@@ -146,5 +146,5 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
     fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(moduleCategories))
 
 } catch (error) {
-    core.setFailed(message)
+    core.setFailed(error.message)
 }
