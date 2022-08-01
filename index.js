@@ -101,6 +101,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
                 packageMap[generated.label] = generated
             }
         }
+        return [packageHierarchy, packageMap]
     }
 
 
