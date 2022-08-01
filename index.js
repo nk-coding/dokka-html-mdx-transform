@@ -9,6 +9,7 @@ try {
     const src = core.getInput("src")
     const dest = core.getInput("dest")
     const folder = core.getInput("folder")
+    const modules = core.getMultilineInput("modules")
 
     function transformFile(file) {
         const content = fs.readFileSync(file)
@@ -81,25 +82,28 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         }
     }
 
-    const packageHierarchy = {}
-    const packageMap = {}
-
-    for (const package of fs.readdirSync(src)) {
-        const packagePath = path.join(src, package)
-        if (fs.statSync(packagePath).isDirectory()) {
-            const generated = generateForDir(packagePath)
-            generated.label = generated.label.replace("Package ", "")
-            const packageStructure = generated.label.split(".")
-            let currentMap = packageHierarchy
-            for (const packagePart of packageStructure) {
-                if (currentMap[packagePart] == undefined) {
-                    currentMap[packagePart] = {}
+    function generateModule(module) {
+        const packageHierarchy = {}
+        const packageMap = {}
+        const modulePath = path.join(src, module)
+        for (const package of fs.readdirSync(modulePath)) {
+            const packagePath = path.join(modulePath, package)
+            if (fs.statSync(packagePath).isDirectory()) {
+                const generated = generateForDir(packagePath)
+                generated.label = generated.label.replace("Package ", "")
+                const packageStructure = generated.label.split(".")
+                let currentMap = packageHierarchy
+                for (const packagePart of packageStructure) {
+                    if (currentMap[packagePart] == undefined) {
+                        currentMap[packagePart] = {}
+                    }
+                    currentMap = currentMap[packagePart]
                 }
-                currentMap = currentMap[packagePart]
+                packageMap[generated.label] = generated
             }
-            packageMap[generated.label] = generated
         }
     }
+
 
     function joinParts(old, newPart) {
         if (old) {
@@ -109,7 +113,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         }
     }
 
-    function generateCategoriesRec(packageHierarchy, localName, globalName) {
+    function generateCategoriesRec(packageHierarchy, packageMap, localName, globalName) {
         const items = []
         let sidebarElement = null
         if (globalName in packageMap) {
@@ -119,7 +123,7 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
             localName = ""
         }
         for (const newPart in packageHierarchy) {
-            items.push(...generateCategoriesRec(packageHierarchy[newPart], joinParts(localName, newPart), joinParts(globalName, newPart)))
+            items.push(...generateCategoriesRec(packageHierarchy[newPart], packageMap, joinParts(localName, newPart), joinParts(globalName, newPart)))
         }
         if (sidebarElement != null) {
             sidebarElement.items = [...sidebarElement.items, ...items]
@@ -129,7 +133,18 @@ import rawHTML from '!!raw-loader!./${withoutEnding}.raw'
         }
     }
 
-    fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(generateCategoriesRec(packageHierarchy, "", "")))
+    const moduleCategories = []
+    for (module of modules) {
+        const [packageHierarchy, packageMap] = generateModule(module)
+        const categories = generateCategoriesRec(packageHierarchy, packageMap, "", "")
+        moduleCategories.push({
+            type: "category",
+            label: module,
+            items: categories
+        })
+    }
+
+    fs.outputFileSync(path.join(dest, folder, "sidebar.json"), JSON.stringify(moduleCategories))
 
 } catch (error) {
     core.setFailed(error.message)
